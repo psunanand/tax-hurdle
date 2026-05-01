@@ -9,96 +9,91 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600&display=swap');
-        :root { --econ-red: #F87171; --econ-fund: #FBBF24; --econ-dark: #0D0D0D; --econ-text: #E0E0E0; }
-        body { background-color: var(--econ-dark); font-family: 'Crimson Pro', serif; color: var(--econ-text); }
+        :root { --econ-red: #E3120B; --econ-paper: #F5F4F0; }
+        body { background-color: var(--econ-paper); font-family: 'Crimson Pro', serif; color: #0D0D0D; }
         .font-sans-alt { font-family: 'Inter', sans-serif; }
         .accent-red { color: var(--econ-red); }
         input[type="range"] { accent-color: var(--econ-red); }
-        .formula { font-family: 'Courier New', Courier, monospace; background: #222; padding: 0.2rem 0.4rem; color: #fff; }
-        .tooltip { position: relative; cursor: help; color: #666; font-size: 0.8rem; }
+        .formula { font-family: 'Courier New', Courier, monospace; background: #eee; padding: 0.2rem 0.4rem; }
     </style>
 </head>
 <body class="p-6 md:p-16">
-    <div class="max-w-6xl mx-auto border-t-8 border-gray-800 pt-8">
+    <div class="max-w-6xl mx-auto border-t-8 border-black pt-8">
         <header class="mb-12">
             <h2 class="uppercase tracking-[0.2em] text-xs font-bold accent-red mb-3 font-sans-alt">Investment Strategy</h2>
-            <h1 class="text-5xl font-bold mb-6 leading-tight text-white">The math of tax-efficiency</h1>
-            <p class="text-xl text-gray-400 max-w-2xl leading-relaxed">
+            <h1 class="text-5xl font-bold mb-6 leading-tight">The math of tax-efficiency</h1>
+            <p class="text-xl text-gray-700 max-w-2xl leading-relaxed">
                 Tax-advantaged funds provide an immediate capital subsidy. To beat them, a DIY portfolio must clear a significantly higher annual return "hurdle."
             </p>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
             <!-- Sidebar: Controls -->
-            <aside class="lg:col-span-1 space-y-10 border-t border-gray-800 pt-8 font-sans-alt">
+            <aside class="lg:col-span-1 space-y-10 border-t border-gray-300 pt-8 font-sans-alt">
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider mb-4 text-gray-400">
-                        Tax Bracket (%) 
-                        <span class="tooltip" title="Based on the Thai progressive income tax system. Higher brackets increase the value of the tax subsidy.">ⓘ</span>
-                    </label>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider mb-4">Tax Bracket (%)</label>
                     <input type="range" id="taxInput" min="0" max="35" step="5" value="20" class="w-full">
-                    <div class="flex justify-between text-lg font-bold mt-2 text-white"><span id="taxVal">20</span>%</div>
+                    <div class="flex justify-between text-lg font-bold mt-2"><span id="taxVal">20</span>%</div>
                 </div>
                 <div>
-                    <label class="block text-[10px] font-bold uppercase tracking-wider mb-4 text-gray-400">
-                        Fund Net Return (%) 
-                        <span class="tooltip" title="Return rate net of management fees and other fund-level costs.">ⓘ</span>
-                    </label>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider mb-4">Fund Net Return (%)</label>
                     <input type="range" id="fundInput" min="0" max="15" step="0.5" value="5" class="w-full">
-                    <div class="flex justify-between text-lg font-bold mt-2 text-white"><span id="fundVal">5.0</span>%</div>
+                    <div class="flex justify-between text-lg font-bold mt-2"><span id="fundVal">5.0</span>%</div>
                 </div>
             </aside>
 
             <!-- Main: Chart & Dashboard -->
             <main class="lg:col-span-3">
-                <div class="relative h-[400px] w-full bg-[#111] border border-gray-800 p-6 shadow-sm">
+                <div class="relative h-[400px] w-full bg-white border border-gray-200 p-6 shadow-sm">
                     <canvas id="hurdleChart"></canvas>
                 </div>
-                
+
+                <p class="mt-4 text-lg font-semibold">Required DIY Return</p>
                 <!-- 30-Year Dashboard -->
                 <div id="hurdleDashboard" class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-[#111] border border-gray-800 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1">5-Year</p>
-                        <p class="text-xl font-bold text-white"><span id="h5">0.0</span>%</p>
+                    <div class="p-4 bg-white border border-gray-200 rounded">
+                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash5yrLabel">5-Year</p>
+                        <p class="text-xl font-bold"><span id="h5">0.0</span></p>
                     </div>
-                    <div class="p-4 bg-[#111] border border-gray-800 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1">10-Year</p>
-                        <p class="text-xl font-bold text-white"><span id="h10">0.0</span>%</p>
+                    <div class="p-4 bg-white border border-gray-200 rounded">
+                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash10yrLabel">10-Year</p>
+                        <p class="text-xl font-bold"><span id="h10">0.0</span></p>
                     </div>
-                    <div class="p-4 bg-[#111] border border-gray-800 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1">20-Year</p>
-                        <p class="text-xl font-bold text-white"><span id="h20">0.0</span>%</p>
+                    <div class="p-4 bg-white border border-gray-200 rounded">
+                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash20yrLabel">20-Year</p>
+                        <p class="text-xl font-bold"><span id="h20">0.0</span></p>
                     </div>
-                    <div class="p-4 bg-[#111] border border-gray-800 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1">30-Year</p>
-                        <p class="text-xl font-bold text-white"><span id="h30">0.0</span>%</p>
+                    <div class="p-4 bg-white border border-gray-200 rounded">
+                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash30yrLabel">30-Year</p>
+                        <p class="text-xl font-bold"><span id="h30">0.0</span></p>
                     </div>
                 </div>
             </main>
         </div>
 
         <!-- Educational Section -->
-        <section class="mt-20 pt-10 border-t border-gray-800 max-w-4xl text-gray-300">
-            <h2 class="text-3xl font-bold mb-6 text-white">The Intuitive Concept</h2>
-            
-            <p class="mb-4">Why is the hurdle so high? Think of the tax-advantaged fund as an <strong>upfront capital subsidy</strong>.</p>
-            <p class="mb-4">If you have 100k to invest and your marginal tax rate is 20%, a DIY taxable approach forces you to pay taxes immediately, leaving only 80k to invest. A tax-advantaged fund lets you invest the full 100k.</p>
-            <p class="mb-6">Because the fund starts with a higher compounding base, your DIY strategy must work harder (achieve a higher annual return) just to catch up to the same ending balance.</p>
+        <section class="mt-20 pt-10 border-t border-gray-300 max-w-4xl text-gray-700">
+            <h2 class="text-3xl font-bold mb-6 text-black" id="eduTitle">The Intuitive Concept</h2>
 
-            <h3 class="font-bold text-lg mb-2 text-white">Mathematical Derivation</h3>
+            <p class="mb-4" id="eduConceptIntro">Why is the hurdle so high? Think of the tax-advantaged fund as an <strong>upfront capital subsidy</strong>.</p>
+            <p class="mb-4" id="eduConceptExplanation">If you have 100k to invest and your marginal tax rate is 20%, a DIY taxable approach forces you to pay taxes immediately, leaving only 80k to invest. A tax-advantaged fund lets you invest the full 100k.</p>
+            <p class="mb-6" id="eduConceptConclusion">Because the fund starts with a higher compounding base, your DIY strategy must work harder (achieve a higher annual return) just to catch up to the same ending balance.</p>
+
+            <h3 class="font-bold text-lg mb-2 text-black" id="eduDerivationTitle">Mathematical Derivation</h3>
             <p class="mb-2">1. Set Future Values (FV) equal: <code class="formula">P(1−T)(1+r<sub>be</sub>)<sup>n</sup> = P(1+r<sub>f</sub>)<sup>n</sup></code></p>
             <p class="mb-2">2. Divide both sides by P: <code class="formula">(1−T)(1+r<sub>be</sub>)<sup>n</sup> = (1+r<sub>f</sub>)<sup>n</sup></code></p>
             <p class="mb-2">3. Isolate DIY component: <code class="formula">(1+r<sub>be</sub>)<sup>n</sup> = (1+r<sub>f</sub>)<sup>n</sup> / (1−T)</code></p>
             <p class="mb-6">4. Solve for r<sub>be</sub>: <code class="formula">r<sub>be</sub> = ( (1+r<sub>f</sub>) / (1−T)<sup>(1/n)</sup> ) - 1</code></p>
 
-            <h3 class="font-bold text-lg mb-2 text-white">Key Realities</h3>
+            <h3 class="font-bold text-lg mb-2 text-black" id="eduKeyRealitiesTitle">Key Realities</h3>
             <ul class="list-disc pl-5 mb-8 space-y-2">
-                <li><strong>Time Dilution:</strong> If the lock-in period (n) is short, the hurdle is massive because the upfront benefit is concentrated. As the timeframe (n) increases, this burden dilutes, and the break-even rate moves closer to the fund's own return.</li>
-                <li><strong>Liquidity Risk:</strong> This math assumes you hold the fund for the full duration. Exiting early often triggers penalty taxes or surcharge repayments that immediately destroy the subsidy's benefit.</li>
+                <li id="eduTimeDilution"><strong>Time Dilution:</strong> If the lock-in period (n) is short, the hurdle is massive because the upfront benefit is concentrated. As the timeframe (n) increases, this burden dilutes, and the break-even rate moves closer to the fund's own return.</li>
+                <li id="eduLiquidityRisk"><strong>Liquidity Risk:</strong> This math assumes you hold the fund for the full duration. Exiting early often triggers penalty taxes or surcharge repayments that immediately destroy the subsidy's benefit.</li>
             </ul>
 
-            <div class="p-4 bg-[#111] border border-gray-800 text-xs text-gray-500">
-                <p><strong>Contextual Note:</strong> Individual capital gains tax policies vary. Some jurisdictions may tax repatriated gains on global DIY strategies, further raising the actual hurdle rate required for private portfolios.</p>
+            <div class="p-4 bg-white border border-gray-200 text-xs text-gray-500">
+                <p id="contextualNoteTitle"><strong>Contextual Note:</strong></p>
+                <p id="contextualNote">Individual capital gains tax policies vary. Some jurisdictions may tax repatriated gains on global DIY strategies, further raising the actual hurdle rate required for private portfolios.</p>
             </div>
         </section>
     </div>
