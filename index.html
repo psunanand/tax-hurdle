@@ -7,6 +7,8 @@
     <!-- External Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js annotation plugin for vertical milestone lines -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;700&family=Inter:wght@400;600&display=swap');
         :root { --econ-red: #E3120B; --econ-paper: #F5F4F0; }
@@ -42,31 +44,11 @@
                 </div>
             </aside>
 
-            <!-- Main: Chart & Dashboard -->
+            <!-- Main: Chart -->
             <main class="lg:col-span-3">
+                <p class="text-lg font-semibold mb-4">Extra Return Needed to Beat Tax-Advantaged Fund</p>
                 <div class="relative h-[400px] w-full bg-white border border-gray-200 p-6 shadow-sm">
                     <canvas id="hurdleChart"></canvas>
-                </div>
-
-                <p class="mt-4 text-lg font-semibold">Required DIY Return</p>
-                <!-- 30-Year Dashboard -->
-                <div id="hurdleDashboard" class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="p-4 bg-white border border-gray-200 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash5yrLabel">5-Year</p>
-                        <p class="text-xl font-bold"><span id="h5">0.0</span></p>
-                    </div>
-                    <div class="p-4 bg-white border border-gray-200 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash10yrLabel">10-Year</p>
-                        <p class="text-xl font-bold"><span id="h10">0.0</span></p>
-                    </div>
-                    <div class="p-4 bg-white border border-gray-200 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash20yrLabel">20-Year</p>
-                        <p class="text-xl font-bold"><span id="h20">0.0</span></p>
-                    </div>
-                    <div class="p-4 bg-white border border-gray-200 rounded">
-                        <p class="text-xs font-bold uppercase text-gray-500 mb-1" id="dash30yrLabel">30-Year</p>
-                        <p class="text-xl font-bold"><span id="h30">0.0</span></p>
-                    </div>
                 </div>
             </main>
         </div>

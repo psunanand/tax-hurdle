@@ -117,7 +117,7 @@ This guide outlines the steps to recreate the Tax-Hurdle calculator application 
     Build the complete HTML structure as seen in the current `index.html`, including:
     *   Header (with title, description, and language toggle elements if implemented).
     *   Sidebar for input controls.
-    *   Main area for the chart and dashboard.
+    *   Main area for the chart only (milestone values are shown via annotation lines on chart).
     *   Educational section with explanations and derivations.
     *   Footer.
     *   Ensure all elements intended for dynamic text updates have unique IDs.
@@ -126,6 +126,72 @@ This guide outlines the steps to recreate the Tax-Hurdle calculator application 
     *   Define JavaScript objects (`contentEN`, `contentTH`) to hold all translatable strings.
     *   Implement a `setContent(lang)` function to update the UI based on the selected language.
     *   Add event listeners to language toggle elements (flags).
+
+## Phase 5: Adding Vertical Milestone Lines (Chart.js Annotation Plugin)
+
+1.  **Include Annotation Plugin:**
+    Add the Chart.js annotation plugin via CDN in `index.html`:
+
+    ```html
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    ```
+
+2.  **Register the Plugin:**
+    In `script.js`, register the annotation plugin before initializing the chart:
+
+    ```javascript
+    Chart.register(window['chartjs-plugin-annotation']);
+    ```
+
+3.  **Add Annotation Config:**
+    In the chart options, add an empty annotation config:
+
+    ```javascript
+    options: {
+        plugins: {
+            annotation: {
+                annotations: {}
+            }
+        }
+    }
+    ```
+
+4.  **Create Dynamic Vertical Lines:**
+    In the `updateData()` function, create vertical annotation lines at milestone years (5, 10, 20, 30):
+
+    ```javascript
+    const milestones = [5, 10, 20, 30];
+    const annotations = {};
+
+    milestones.forEach(year => {
+        const hurdle = calculateHurdle(T, rf, year);
+        const extra = (hurdle - rf).toFixed(1);
+        
+        annotations[`line${year}`] = {
+            type: 'line',
+            xMin: year - 1,
+            xMax: year - 1,
+            borderColor: '#0D0D0D',
+            borderWidth: 1,
+            borderDash: [4, 4],
+            label: {
+                display: true,
+                content: `${year}y: +${extra}%`,
+                position: 'start',
+                backgroundColor: '#0D0D0D',
+                color: '#fff',
+                font: { family: 'Inter', size: 10, weight: 'bold' },
+                padding: 4,
+                yAdjust: -20
+            }
+        };
+    });
+
+    hurdleChart.options.plugins.annotation.annotations = annotations;
+    hurdleChart.update();
+    ```
+
+    This approach replaces the previous dashboard boxes with vertical annotation lines on the chart itself, showing the "extra % return" needed at each milestone year.
 
 ## Phase 5: Testing and Refinement
 
